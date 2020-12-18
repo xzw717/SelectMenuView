@@ -30,7 +30,6 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.contentView addSubview:self.titLabel];
         [self.contentView addSubview:self.selectImageView];
-        CGSize size = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 
 
     }
@@ -172,7 +171,7 @@
           } completion:^(BOOL finished) {
               [self removeFromSuperview];
               if (self.clickModel) {
-                    self.clickModel(nil);
+                    self.clickModel(@"");
                 }
               if (self.delegate &&[self.delegate respondsToSelector:@selector(dismissSelectMenuView)]) {
                   [self.delegate dismissSelectMenuView];
@@ -213,11 +212,11 @@
     if (self.clickModel) {
         self.clickModel(@"点击菜单");
     }
-    if (self.delegate &&[self.delegate respondsToSelector:@selector(clickWithModel:)]) {
-//           [self.delegate clickWithModel:self.titleArray[indexPath.row]];
-       
+    if (self.delegate &&[self.delegate respondsToSelector:@selector(clickWithCell:)]) {
+        [self.delegate clickWithCell:self.dataSource.titleArray[indexPath.row]];
+
     }
-    self.index = [NSString stringWithFormat:@"上次点击%ld",indexPath.row];
+    self.index = [NSString stringWithFormat:@"上次点击%ld",(long)indexPath.row];
     [self removeView];
     
 }

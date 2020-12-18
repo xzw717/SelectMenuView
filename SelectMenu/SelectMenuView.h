@@ -11,13 +11,14 @@
 #import <Foundation/Foundation.h>
 #import "SelectMenuViewUIConfiguration.h"
 #import "SelectMenuViewDataSourceConfiguration.h"
+#import <UIKit/UIKit.h>
 
 
 @protocol SelectMenuViewDelegate <NSObject>
 
 @optional
-/// 点击的角色模型
-//- (void)clickWithModel:(RoleListModel *_Nonnull)model;
+/// 点击
+- (void)clickWithCell:(RoleListModel *_Nonnull)tit;
 /// 视图已经出现
 - (void)showSelectMenuView;
 /// 视图已经消失
@@ -25,7 +26,6 @@
 
 
 @end
-#import <UIKit/UIKit.h>
 
 /// 箭头出现的方向
 typedef NS_ENUM(NSInteger,SelectMenuViewArrowType) {
