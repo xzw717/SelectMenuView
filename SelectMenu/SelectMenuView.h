@@ -18,7 +18,7 @@
 
 @optional
 /// 点击
-- (void)clickWithCell:(RoleListModel *_Nonnull)tit;
+- (void)clickWithCell:(NSString *_Nonnull)tit;
 /// 视图已经出现
 - (void)showSelectMenuView;
 /// 视图已经消失
