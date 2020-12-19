@@ -1,9 +1,9 @@
-
+# pod trunk push SelectMenuView.podspec
 
 Pod::Spec.new do |spec|
 
   spec.name         = "SelectMenuView"
-  spec.version      = "1.0.0"
+  spec.version      = "1.0.2"
   spec.summary      = "一个比较简单的弹窗，自用"
 
   spec.description  = <<-DESC

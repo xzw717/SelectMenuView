@@ -30,6 +30,7 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.contentView addSubview:self.titLabel];
         [self.contentView addSubview:self.selectImageView];
+        CGSize size = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 
 
     }
@@ -148,11 +149,11 @@
        [self addSubview:self.menuTableView];
     CGRect rect=[view convertRect: view.bounds toView:menuWindow];
     [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y +rect.size.height + 30.f, rect.size.width, 0)];
-    [UIView animateWithDuration:0.25 animations:^{
-        [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, rect.size.width, 330.f)];
+    [UIView animateWithDuration:0.01 animations:^{
+        [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, rect.size.width, self.configuration.totalHeight + 10)];
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.15 animations:^{
-            [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, rect.size.width, 320.f)];
+        [UIView animateWithDuration:0.25 animations:^{
+            [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, rect.size.width, self.configuration.totalHeight)];
             if (self.delegate &&[self.delegate respondsToSelector:@selector(showSelectMenuView)]) {
                 [self.delegate showSelectMenuView];
             }
@@ -164,7 +165,7 @@
 
 - (void)removeView {
     [UIView animateWithDuration:0.15 animations:^{
-          [self.menuTableView setFrame:CGRectMake(self.menuTableView.frame.origin.x , self.menuTableView.frame.origin.y, self.menuTableView.frame.size.width, 330.f)];
+          [self.menuTableView setFrame:CGRectMake(self.menuTableView.frame.origin.x , self.menuTableView.frame.origin.y, self.menuTableView.frame.size.width, self.configuration.totalHeight + 10)];
       } completion:^(BOOL finished) {
           [UIView animateWithDuration:0.25 animations:^{
               [self.menuTableView setFrame:CGRectMake(self.menuTableView.frame.origin.x , self.menuTableView.frame.origin.y, self.menuTableView.frame.size.width, 0)];
@@ -213,10 +214,10 @@
         self.clickModel(@"点击菜单");
     }
     if (self.delegate &&[self.delegate respondsToSelector:@selector(clickWithCell:)]) {
-        [self.delegate clickWithCell:self.dataSource.titleArray[indexPath.row]];
-
+           [self.delegate clickWithCell:self.dataSource.titleArray[indexPath.row]];
+       
     }
-    self.index = [NSString stringWithFormat:@"上次点击%ld",(long)indexPath.row];
+    self.index = [NSString stringWithFormat:@"上次点击%ld",indexPath.row];
     [self removeView];
     
 }
@@ -237,6 +238,9 @@
         __weak typeof(self) weakSelf = self;
         return ^(SelectMenuViewUIConfiguration *configuration){
             weakSelf.configuration = configuration;
+            self.menuTableView.backgroundColor = configuration.tableBackgroundColor != nil ? configuration.tableBackgroundColor : [UIColor whiteColor];
+            self.menuTableView.rowHeight = configuration.cellHeight != 0 ? configuration.cellHeight : 44.f;
+
             return weakSelf;
         };
     }
@@ -255,6 +259,7 @@
         _menuTableView.layer.masksToBounds = YES;
         _menuTableView.backgroundColor = self.configuration.tableBackgroundColor != nil ? self.configuration.tableBackgroundColor : [UIColor whiteColor];
         _menuTableView.tableFooterView = [UIView new];
+        
         _menuTableView.scrollEnabled = self.configuration.scrollEnabled ;
         
     }
