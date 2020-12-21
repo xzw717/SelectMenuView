@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 宽度
 @property (nonatomic, assign) CGFloat   cellWidth;
 /// 总高度
-@property (nonatomic, assign) CGFloat totalHeight;
+@property (nonatomic, assign) CGFloat   totalHeight;
 /// 背景颜色
 @property (nonatomic, strong) UIColor   *tableBackgroundColor;
 /// 字体颜色
@@ -28,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 透明程度
 @property (nonatomic, assign) CGFloat   tableAlpha;
 
+/// 是否自动宽度
+/// 默认是根据传入的视图宽度来自适应
+@property (nonatomic, assign) BOOL      automaticWidth;
 /// 是否启用视图滚动
 @property (nonatomic, assign) BOOL      scrollEnabled;
 

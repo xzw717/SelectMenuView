@@ -5,6 +5,9 @@
 //  Created by mymac on 2020/7/29.
 //  Copyright © 2020 Fujian first time iot technology investment co., LTD. All rights reserved.
 //
+
+
+
 #import "SelectMenuView.h"
 
 @interface selectMenuCell : UITableViewCell
@@ -16,7 +19,8 @@
 @property (nonatomic, strong) NSString *cellDataSource;
 /// UI配置
 @property (nonatomic, strong) SelectMenuViewUIConfiguration *cellConfiguration;
-
+/// table 宽度
+@property (nonatomic, assign) CGFloat tableViewCellWidth;
 @end
 
 @interface selectMenuCell ()
@@ -30,7 +34,6 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.contentView addSubview:self.titLabel];
         [self.contentView addSubview:self.selectImageView];
-        CGSize size = [self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
 
 
     }
@@ -38,12 +41,15 @@
 }
 - (void)setCellConfiguration:(SelectMenuViewUIConfiguration *)cellConfiguration {
     _cellConfiguration = cellConfiguration;
-    self.titLabel.frame = CGRectMake(5, self.contentView.center.y - self.cellConfiguration.tableTitleFont / 2 , 70 , self.cellConfiguration.tableTitleFont != 0 ? self.cellConfiguration.tableTitleFont : 13);
-    self.selectImageView.frame = CGRectMake(80, self.contentView.center.y -  20 / 2 , 20, 20);
+    self.titLabel.frame = CGRectMake(5, self.contentView.center.y - self.cellConfiguration.tableTitleFont / 2 , self.contentView.frame.size.width - 5 * 3 - 12 , self.cellConfiguration.tableTitleFont != 0 ? self.cellConfiguration.tableTitleFont : 13);
+    self.selectImageView.frame = CGRectMake(self.titLabel.frame.size.width + self.titLabel.frame.origin.x + 5, self.contentView.center.y -  12 / 2 , 12, 12);
 
 }
 - (void)setCellDataSource:(NSString *)cellDataSource {
     self.titLabel.text = cellDataSource;
+    self.titLabel.frame = CGRectMake(5, self.contentView.center.y - self.cellConfiguration.tableTitleFont / 2 , self.contentView.frame.size.width - 5 * 3 - 12 , self.cellConfiguration.tableTitleFont != 0 ? self.cellConfiguration.tableTitleFont : 13);
+    self.selectImageView.frame = CGRectMake(self.titLabel.frame.size.width + self.titLabel.frame.origin.x + 5, self.contentView.center.y -  12 / 2 , 12, 12);
+
 
 
 }
@@ -63,10 +69,10 @@
 - (UILabel *)titLabel {
     if (!_titLabel) {
         _titLabel = [[UILabel alloc]init];
-        _titLabel.backgroundColor = [UIColor greenColor];
         _titLabel.numberOfLines = 0;
         _titLabel.frame = CGRectMake(5, 5, 0, 0);
         _titLabel.font = [UIFont systemFontOfSize:self.cellConfiguration.tableTitleFont != 0 ? self.cellConfiguration.tableTitleFont : 13];
+        _titLabel.textColor = self.cellConfiguration.tableTitleColor ? self.cellConfiguration.tableTitleColor : [UIColor blackColor];
         [_titLabel sizeToFit];
         
     }
@@ -75,8 +81,8 @@
 - (UIImageView *)selectImageView {
     if (!_selectImageView) {
         _selectImageView = [[UIImageView alloc]init];
-        _selectImageView.backgroundColor = [UIColor orangeColor];
         _selectImageView.bounds = CGRectMake(0, 0, 20, 20);
+        _selectImageView.image = [UIImage imageNamed:@"select_icon"];
     }
     return _selectImageView;
 }
@@ -93,6 +99,8 @@
 @property (nonatomic, strong) SelectMenuViewUIConfiguration *configuration;
 @property (nonatomic, strong) SelectMenuViewDataSourceConfiguration *dataSource;
 @property (nonatomic, strong) NSArray * titleArray;
+
+
 @end
 @implementation SelectMenuView
 
@@ -112,6 +120,7 @@
         self.clipsToBounds = NO;
         [self setFrame:CGRectMake(0, 0, smv_Width, smv_height)];
         [self addView:view];
+        
         self.type = type;
        
     }
@@ -143,23 +152,28 @@
     [self.configuration.tableBackgroundColor setStroke];//边框也设置为_color，否则为默认的黑色
     CGContextDrawPath(context, kCGPathFillStroke);//绘制路径path
 }
+
 - (void)addView:(UIView *)view {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+ 
     UIWindow *menuWindow = [[UIApplication sharedApplication].windows lastObject];
     [menuWindow addSubview:self];
        [self addSubview:self.menuTableView];
     CGRect rect=[view convertRect: view.bounds toView:menuWindow];
-    [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y +rect.size.height + 30.f, rect.size.width, 0)];
-    [UIView animateWithDuration:0.01 animations:^{
-        [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, rect.size.width, self.configuration.totalHeight + 10)];
+//    CGFloat tableViewWidth = self.dataSource.titleArray
+    [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y +rect.size.height + 30.f, self.configuration.automaticWidth ?  rect.size.width : [self titleWidth], 0)];
+    [UIView animateWithDuration:0.1 animations:^{
+        [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, self.configuration.automaticWidth ?  rect.size.width : [self titleWidth], self.configuration.totalHeight + 10)];
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.25 animations:^{
-            [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, rect.size.width, self.configuration.totalHeight)];
+        [UIView animateWithDuration:0.15 animations:^{
+            [self.menuTableView setFrame:CGRectMake(rect.origin.x , rect.origin.y + rect.size.height + 30.f, self.configuration.automaticWidth ?  rect.size.width : [self titleWidth], self.configuration.totalHeight)];
             if (self.delegate &&[self.delegate respondsToSelector:@selector(showSelectMenuView)]) {
                 [self.delegate showSelectMenuView];
             }
         }];
     }];
-   
+        
+    });
 
 }
 
@@ -171,9 +185,6 @@
               [self.menuTableView setFrame:CGRectMake(self.menuTableView.frame.origin.x , self.menuTableView.frame.origin.y, self.menuTableView.frame.size.width, 0)];
           } completion:^(BOOL finished) {
               [self removeFromSuperview];
-              if (self.clickModel) {
-                    self.clickModel(@"");
-                }
               if (self.delegate &&[self.delegate respondsToSelector:@selector(dismissSelectMenuView)]) {
                   [self.delegate dismissSelectMenuView];
               }
@@ -181,6 +192,19 @@
           
       }];
 }
+
+- (CGFloat)titleWidth {
+    NSString *str = self.dataSource.titleArray[0];
+    for (NSString *tit in self.dataSource.titleArray) {
+        if (str.length < tit.length) {
+            str = tit;
+        }
+    }
+    
+    return str.length * (self.configuration.tableTitleFont + 2) + 5 * 3 + 12;
+}
+
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.dataSource.titleArray.count;
    
@@ -190,14 +214,11 @@
   
     selectMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([selectMenuCell class]) forIndexPath:indexPath];
     cell.cellConfiguration = self.configuration;
-
     cell.cellDataSource = self.dataSource.titleArray[indexPath.row];
     cell.backgroundColor = self.configuration.tableBackgroundColor;
     cell.titLabel.textColor = self.configuration.tableTitleColor;
     cell.titLabel.textAlignment = NSTextAlignmentLeft;
-    cell.titLabel.preferredMaxLayoutWidth = self.configuration.cellWidth;
     cell.selectImageView.hidden = self.dataSource.indexRow == indexPath.row ? NO : YES;
-
   
     return cell;
   
@@ -210,14 +231,13 @@
     [self removeView];
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.clickModel) {
-        self.clickModel(@"点击菜单");
+    if (self.clickCompletion) {
+        self.clickCompletion(self.dataSource.titleArray[indexPath.row],indexPath.row);
     }
-    if (self.delegate &&[self.delegate respondsToSelector:@selector(clickWithCell:)]) {
-           [self.delegate clickWithCell:self.dataSource.titleArray[indexPath.row]];
+    if (self.delegate &&[self.delegate respondsToSelector:@selector(clickWithCellTitle:indexPathRow:)]) {
+           [self.delegate clickWithCellTitle:self.dataSource.titleArray[indexPath.row] indexPathRow:indexPath.row];
        
     }
-    self.index = [NSString stringWithFormat:@"上次点击%ld",indexPath.row];
     [self removeView];
     
 }
@@ -227,6 +247,7 @@
         __weak typeof(self) weakSelf = self;
          return ^(SelectMenuViewDataSourceConfiguration *dataSource){
              weakSelf.dataSource = dataSource;
+             
              return weakSelf;
          };
     }
