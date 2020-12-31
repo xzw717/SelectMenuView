@@ -3,7 +3,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "SelectMenuView"
-  spec.version      = "1.0.2"
+  spec.version      = "1.0.3"
   spec.summary      = "一个比较简单的弹窗，自用"
 
   spec.description  = <<-DESC
@@ -24,7 +24,7 @@ Pod::Spec.new do |spec|
  
   spec.source       = { :git => "https://github.com/xzw717/SelectMenuView.git", :tag => "#{spec.version}" }
 
-  spec.source_files  = "SelectMenu/**/*.{h,m}"
+  spec.source_files  = "SelectMenuView/SelectMenu/**/*.{h,m}"
 
 
 end
